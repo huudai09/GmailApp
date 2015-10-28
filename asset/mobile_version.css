@@ -1,0 +1,73 @@
+@media (max-width: 600px) {
+	#side {
+		position: fixed !important;
+		width: 100%;
+		z-index: 1;
+		top: 0px;
+		left: 0px;
+		background: transparent;
+		-webkit-transform: translateX(-110%);
+		-moz-transform: translateX(-110%);
+		transform: translateX(-110%);
+		
+		-webkit-transition: all .4s ease;
+		-moz-transition: all .4s ease;
+		transition: all .4s ease		
+	}
+	
+	#side .mbtn{
+		width: 200px;
+		background: #1C222E;
+	}
+	
+	#side .menus{
+		width: 220px;
+		background: #1C222E;
+	}
+	
+	#side.show {
+		-webkit-transform: translateX(0px);
+		-moz-transform: translateX(0px);
+		transform: translateX(0px);
+	}	
+	
+	.mail-closebtn{display: block;}
+	
+	.list {width: 100%; border: none;}
+	
+	.view{
+		position: fixed;
+		top:0px;
+		left: 0px;
+		width: 100%;
+		background: #fff;
+		
+		opacity: 0;
+		-webkit-transform: translateY(100%);
+		-moz-transform: translateY(100%);
+		transform: translateY(100%);
+		
+		-webkit-transition: all .4s ease;
+		-moz-transition: all .4s ease;
+		transition: all .4s ease
+	}
+	
+	#mailinglist {
+		width: 100%;
+		overflow: hidden;
+	}	
+	.view.show {
+		-webkit-transform: translateY(0%);
+		-moz-transform: translateY(0%);
+		transform: translateY(0%);
+		opacity: 1;
+	}	
+	
+	.composearea {
+		z-index: 1;
+		min-width: 100vw;
+		max-width: 100vw;
+		height: 100vh;
+	}
+	
+}
