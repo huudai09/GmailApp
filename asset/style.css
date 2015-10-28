@@ -219,7 +219,7 @@ body{
 .list-pagination {
     overflow: hidden;
     border-bottom: 1px solid #D8D8D8;
-    background: #E2E2E2;    
+    background: #F1F1F1;    
 }
 
 .list-next, .list-prev{
