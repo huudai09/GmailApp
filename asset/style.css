@@ -84,21 +84,8 @@ a[href]{
 	box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 16px;	
 }
 
-.pop.alert .pop-content{
-    background: #E45F5F;
-    color: #FFD0D0;
-    text-shadow: 0px 0px 6px #651717;
-}
-
 .pop.notice {
     text-align: center;
-}
-
-.pop.notice .pop-content {
-    background: #53CC68;    
-    margin-top: 20vh;
-    color: #DDFFE3;
-    text-shadow: 0px 0px 3px #0F8624;
 }
 
 .pop.notice.pop-hide{
@@ -116,6 +103,23 @@ a[href]{
     transform: scale(2);
     opacity: 0;
     z-index: -1; 
+}
+
+/* Customize pop's type */
+
+.pop.alert .pop-content{
+    background: #E45F5F;
+    color: #FFD0D0;
+    text-shadow: 0px 0px 6px #651717;
+	border: 1px solid #D23737;
+}
+
+.pop.notice .pop-content {
+    background: #53CC68;    
+    margin-top: 20vh;
+    color: #DDFFE3;
+    text-shadow: 0px 0px 3px #0F8624;
+	border: 1px solid #3FCA57;
 }
 
 .pop.confirm .pop-content{
