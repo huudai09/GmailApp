@@ -1,20 +1,38 @@
 <!DOCTYPE html>
 <html>
     <head>
+    	<title>GmailApp</title>
         <meta charset="utf-8"/>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="asset/style.css"/>
-		<link rel="stylesheet" href="asset/mobile_version.css"/>		
+		<link rel="stylesheet" href="asset/mobile_version.css"/>
+
         <script src="lib/jquery-1.9.0.js"></script>        
 		<script src="lib/angular.js"></script>
-		<script src="lib/angular-sanitize.js"></script>		
+		<script src="lib/angular-sanitize.js"></script>
+		<script src="lib/modal.js"></script>
+
+		<script src="boot.js"></script>
         <script src="app.js"></script>
-        <script src="boot.js"></script>  			
+
+        <script src="script/elements.js"></script>
+        <script src="script/controller.js"></script>
+        <script src="script/plugins.js"></script>
+        <script src="script/helper.js"></script>
     </head>
     <body ng-app="MailApp">
-        <div id="wrapper" class="loading full" ng-controller="LablesCtrl">		
+        <div id="wrapper" class="loading full" ng-controller="Controller">        
+
             <div id=side ng-click="toggleMenu()">
-                <center class=mbtn><button ng-click="compose()" class="btn full" data-email="NONONE">Inbox</button></center>
+            	<div id="profile">
+            		<img class="profile-img" src="asset/img/user.png"/>
+            		<div class="profile-cre">
+            			<span class="profile-name">NONAME</span>
+            			<span ng-click="logout()" id="logout">Logout</span>
+            		</div>
+            	</div>
+                <center class=mbtn>
+                	<button g-mail class="btn full" data-email="NONONE">Inbox</button>                	
+                </center>
                 <ul class=menus>					
 					<li ng-repeat="l in labels" class="item {{l.active}}" data-name="{{l.name}}" ng-click="load()">{{l.title}}</li>                    
                 </ul>				
@@ -23,8 +41,8 @@
                 <div class=list>
                     <h2 class=list-header ng-click="toggleMenu()">{{title}}</h2>
 					<div class="list-pagination">
-						<div class="list-nav list-prev disabled" ng-click="prev()">cũ hơn</div>
-						<div class="list-nav list-next disabled" ng-click="next()">mới hơn</div>
+						<div class="list-nav list-prev disabled" ng-click="prev()">older</div>
+						<div class="list-nav list-next disabled" ng-click="next()">newer</div>
 					</div>
                     <div class=tbl>
 						<div ng-repeat="thread in threads" ng-click="view(this)" class="tr lmail-item {{thread.clss}}" id="{{thread.randID}}">
@@ -39,32 +57,13 @@
                 <div class=view ng-bind-html="viewer"></div>			
             </div>
             <div id=authorize class=none>
-                <p>Bạn cần xác thực truy cập thông tin người dùng</p>      
+                <p class="authorize-desc">Authorize access to Gmail API</p>      
                 <button id="authorize-button" class="btn">
-                    Thực hiện xác thực
-                </button>		
+                    Authorize
+                </button>
             </div>
             <div class="composebox none">
-				<div ng-repeat="c in composeForms" id="{{c.id}}" class="composearea">     
-					<div class="compose-header">         
-						<h3 class="compose-title">Soạn thư</h3>         
-						<div class="compose-btns">             
-							<div class="compose-btn compose-btn-minimize none">minimize</div>             
-							<div class="compose-btn compose-btn-fullfilled none">fullscreen</div> 
-							<div class="compose-btn compose-btn-close" ng-click="closeForm()">×</div>         
-						</div>     
-					</div>     
-					<div class="compose-body">         
-						<form id="{{c.formID}}" class="compose-form">             
-							<input class="compose-inp" name="to" placeholder="Tới" />
-							<input class="compose-inp" name="subject" placeholder="Tiêu đề" />
-							<textarea class="compose-editor" name="content"></textarea>             
-							<div class="compose-action">                 
-								<button ng-click="send()" class="compose-send btn">Gửi thư</button>             
-							</div>         
-						</form>     
-					</div>     
-				</div>			
+            	<div g-compose ng-repeat="c in composeForms" id="{{c.id}}" class="composearea"></div>			
 			</div>
         </div>
         <div class="initLoading">

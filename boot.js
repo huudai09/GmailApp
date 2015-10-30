@@ -20,12 +20,13 @@
 		var timer = setInterval(function(){
 			if(window.APP.verify){
 				clearInterval(timer);
-				gapi.client.load('gmail', 'v1', TRIGGER);		
+				gapi.client.load('gmail', 'v1');		
 				gapi.client.load('plus', 'v1', function() {
 				  gapi.client.plus.people.get( {'userId' : 'me'} ).execute(function(resp) {	
 					if(resp.hasOwnProperty('emails')){
 						window['ME'] = resp;
 						window['EMAIL'] = resp.emails[0]['value'];
+						TRIGGER();
 					}
 				  })
 				});
@@ -33,24 +34,25 @@
 		}, 400);
 	};
 	
-	App.prototype.handleAuthResult = function(authResult){		
-        var authorizeDiv = document.getElementById('authorize');	
-		var self = 	arguments.callee;		
-		
-        if (authResult && !authResult.error) {          
-          authorizeDiv.style.display = 'none';		  
+	App.prototype.handleAuthResult = function(authResult){
+        var authorizeDiv = $('#authorize');
+        var authBtn = $('#authorize-button');
+        var self = this;
+
+        if (authResult && !authResult.error) {
+          authorizeDiv.hide();
 		  window.APP.verify = true;
-        } else {
-          authorizeDiv.style.display = 'inline';		  		  
-		  document.getElementById('authorize-button').onclick = function(event) {						
+        } else {          
+          authorizeDiv.show();
+		  authBtn.click(function() {
 			gapi.auth.authorize({
 				client_id: CLIENT_ID, 
 				scope: SCOPES, 
 				immediate: false}
-			,self);
+			,self.handleAuthResult);
 			  
 			return;
-		  };
+		  });
         }		
 	};
 	
@@ -59,7 +61,7 @@
 		  'client_id': this.CLIENT_ID,
 		  'scope': this.SCOPES.join(' '),
 		  'immediate': true
-		}, this.handleAuthResult);		
+		}, $.proxy(this.handleAuthResult, this));		
 	};	
 
 	window['AUTH'] = new App();	
