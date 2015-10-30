@@ -64,9 +64,9 @@ a[href]{
 }
 
 .pop.alert.pop-hide{
-    -webkit-transform: translateX(300px);
-    -moz-transform: translateX(300px);
-    transform: translateX(300px);
+    -webkit-transform: translateX(350px);
+    -moz-transform: translateX(350px);
+    transform: translateX(350px);
     opacity: 0;
     z-index: -1;
 }
@@ -74,12 +74,14 @@ a[href]{
 .pop .pop-content{
     padding: 20px;
     margin: 10px;
-    font-size: 13px;
+    font-size: 17px;
     display: inline-block;
-    max-width: 285px;
+    max-width: 330px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+	border: 1px solid rgb(190, 190, 190);
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 4px 16px;	
 }
 
 .pop.alert .pop-content{
@@ -93,8 +95,7 @@ a[href]{
 }
 
 .pop.notice .pop-content {
-    background: #53CC68;
-    box-shadow: 0px 0px 45px -1px rgba(0, 0, 0, 0.43);
+    background: #53CC68;    
     margin-top: 20vh;
     color: #DDFFE3;
     text-shadow: 0px 0px 3px #0F8624;
@@ -120,12 +121,11 @@ a[href]{
 .pop.confirm .pop-content{
     background: #FFFFFF;
     color: #1C222E;    
-    margin-top: 20vh;
-    box-shadow: 0px 0px 14px 0px rgba(84, 84, 84, 0.82);
+    margin-top: 20vh;    
 }
 
 .pop-action {
-    margin-top: 10px;
+    margin-top: 20px;
     text-align: center;
 }
 
