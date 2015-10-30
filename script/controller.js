@@ -163,8 +163,8 @@
 		var _pageToken = [];
 		var _params = null;
 		var _navigate = function(dir){
-		
-			if(_pageToken.length){				
+			var disabled = $((dir == 'next' ? '.list-next' : '.list-prev')).hasClass('disabled');				
+			if(_pageToken.length && !disabled){
 				(dir == 'next') && _pageToken.splice(-2); // splice -2, cuz _loadHandler will push a new token when request success
 				_params.pageToken = _pageToken[_pageToken.length - 1];			
 				_loadHandler(_params);					
