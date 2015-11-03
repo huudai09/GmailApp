@@ -613,6 +613,7 @@ a[href]{
     line-height: 22px;
     border-bottom: 1px solid #E4E4E4;
     position: relative;
+	font-size: 12px;
 }
 
 .mail-content-date {
@@ -624,6 +625,79 @@ a[href]{
     position: absolute;
     top: -8px;
     right: 8px;
+}
+
+.mail-attachments {
+	padding: 10px;
+    border-bottom: 1px solid #E4E4E4;
+    margin-top: -1px;
+    border-top: 1px dashed #F9F9F9;
+    position: relative;
+}
+
+.mail-attachment-total {
+    font-size: 11px;
+    margin-bottom: 10px;
+    color: #1180D8;
+}
+
+.mail-file {
+    max-width: 200px;
+    display: inline-block;
+    overflow: hidden;
+	text-overflow: ellipsis;
+    margin-right: 10px;
+    background: #fff;
+    border: 1px solid #E4E4E4;
+    padding: 10px;
+    font-size: 12px;
+	cursor: pointer;
+	position: relative;
+    -webkit-transition: all .3s ease;
+    -moz-transition: all .3s ease;
+    transition: all .3s ease;	
+}
+
+.mail-file:hover{
+    border: 1px solid #B3B3B3;
+    box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.18);
+}
+
+.mail-file:after {
+    content: attr(title);
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    background: #E4E4E4;
+    color: #fff;
+    padding: 2px 5px;
+    text-shadow: 0px 0px 3px rgba(0,0,0,.46);
+    font-weight: bold;
+    line-height: 30px;
+}
+
+.mail-file:before{
+    content: attr(title);    
+    color: transparent;
+    padding-right: 5px;
+}
+
+.mail-file.DOCX:after{
+    background: #268FE2;    
+}
+
+.mail-file.PNG:after{
+    background: #29CA96;    
+}
+
+.mail-file.XLS:after{
+    background: #83E629;    
+}
+
+.mail-file.ZIP:after,
+.mail-file.RAR:after {
+    background: #E03232;
 }
 
 .mail-closebtn {

@@ -1,8 +1,49 @@
 ;(function(app){
 
-	'use strict';
+	'use strict';	
+	
+	app.factory('GFile', function(){
+		var files = {};
+		return {			
+			save: function(data){
+				var fid = _.randId();								
+				files[fid] = data;
+				return fid;
+			},
+			get: function(fid){
+				return !!files[fid] ? files[fid] : null;
+			},
+			getAll: function(){ return files; },
+			download: function(fid){
+				var file = this.get(fid);
+				if(file){
+					var attachID = file.body.attachmentId;
+					Model.query('messages.attachments.get', {
+						id: attachID,
+						messageId: file.messageId
+					}, function(res){
+						if(res.data){
+							var data = atob(res.data.replace(/-/g, '+').replace(/_/g, '/'));
 
-	app.controller('Controller', function($scope) {
+							// Convert that text into a byte array.
+							var ab = new ArrayBuffer(data.length);
+							var ia = new Uint8Array(ab);
+							for (var i = 0; i < data.length; i++) {
+								ia[i] = data.charCodeAt(i);
+							}
+
+							// Blob for saving.
+							var blob = new Blob([ia], { type: file.mimeType });		
+							document.location.href = window.URL.createObjectURL(blob);							
+						}
+					})
+				}
+			},
+			clear: function(){ return files = {}; }
+		}
+	});
+
+	app.controller('Controller', function($scope, GFile) {
 		
 		$scope.labels = [
 			{name: 'INBOX',
@@ -60,6 +101,15 @@
 			logoutUrl = 'https://accounts.google.com/logout',
 			d = date.getFullYear() + '/' + date.getMonth() + 1 + '/' + date.getDate();	
 
+		// Init function 
+		
+		(function INIT(){	
+			$('#mailinglist .view').on('click', '.mail-file', function(){
+				var fid = this.className.replace(/^(.*{{)|(}}.*$)/g, '');
+				GFile.download(fid);
+			});
+		})();
+		
 		// Define: Action ------------------------------------------------------------------------------	
 		
 		$scope.toggleMenu = function(ev){
@@ -113,9 +163,9 @@
 			_loadHandler(lb);
 		};			
 		
-		$scope.view = function(elem){
+		$scope.view = function(elem){			
 			var prop = elem.thread,
-				item = $('#'+prop.randID);
+				item = $('#'+prop.randID);						
 						
 			$('.tbl .selected').removeClass('selected');
 			item.addClass('selected');			
@@ -218,7 +268,7 @@
 						}), {'id': threads[i]['id']});
 					}
 
-					batch.execute(function (res) {
+					batch.execute(function (res) {						
 						if (!!res) {
 							var data = [];
 							for (var x in res) {
@@ -229,7 +279,8 @@
 									result['headers'] = lastest_thread['payload']['headers'];
 									data.push(result);
 								}
-							}
+							}												
+							
 							if (data.length) {							
 								_buildList({'threads': data,
 									'resultSizeEstimate': data.length,
@@ -246,7 +297,8 @@
 					_.setLoading(false);
 				}			
 			});		
-		};
+		};		
+		
 		var _buildList = function(data){
 			var item = [];
 			if (data.resultSizeEstimate > 0) {
@@ -270,7 +322,7 @@
 							
 					item.push({
 						clss: clss,
-						id: thread['id'],
+						id: thread['threadId'],
 						randID: _.randId(),
 						from: h.from,
 						subject: h['subject'],
@@ -291,9 +343,13 @@
 		};
 		var _view = function(resp){
 			var html = '';
-			!!resp.error && alert(resp.message);
-            if (!!resp.messages.length) {
-                
+			console.log(resp);
+			
+			// clear file
+			GFile.clear();
+			
+			!!resp.error && _.notice(resp.message);
+            if (!!resp.messages && resp.messages.length) {				
                 var bool = false, messlen = resp.messages.length,
                         lastID = null, lastHeader = null;
                 for (var i = 0; i < resp.messages.length; i++) {
@@ -348,11 +404,20 @@
                     }
 
                     var marked = i < (messlen - 1) ? 'old' : '';
+					var attachments = [];
 
                     if (!!parts) {
                         for (var j = 0; j < parts.length; j++) {
-                            var part = parts[j],
-                                    mtype = part.mimeType;
+                            var part = parts[j],								
+                                mtype = part.mimeType;
+									
+							// file attachments
+							if (part.filename && part.filename.length > 0) {
+								part['messageId'] = resp.id;
+								attachments.push(part);
+							}
+							
+							// message content
                             switch (mtype) {
                                 case 'multipart/alternative':
                                     if (part.parts) {
@@ -363,24 +428,41 @@
                                         })
                                     }
 									// no break here, reuse the below case
-                                case 'text/html':
+                                case 'text/html':									
                                     html += '<div class="mail-content ' + marked + '">' + date + _.decode(part.body.data) + '</div>';
                                     break;
                             }
                         }
+						
+						// append attachments
+						if(attachments.length){
+							var tmp = '', ext, file_id;
+							attachments.forEach(function(attach){								
+								file_id = ['{{', GFile.save(attach), '}}'].join('');
+								ext = attach.filename.match(/\.([a-zA-Z0-9]+)$/gi);
+								ext = ext ? ext[0].slice(1).toUpperCase() : 'NONE';
+								tmp += '<div title="'+ext+'" class="mail-file '+ file_id + ' '+ ext+ '">'+attach.filename+'</div>';								
+							});
+							html += '<div class="mail-attachments">' 
+								 + '<div class="mail-attachment-total">Have '+attachments.length+' attachments:</div>' 
+								 + tmp + '</div>';							
+						}
+						
                     } else {
-                        if (!!body.data) {
+                        if (!!body.data) {							
                             html += '<div class="mail-content ' + marked + '">' + date + _.decode(body.data) + '</div>';
                         }
                     }
                 }
             }
-			html = '<span class="mail-closebtn">×</span>' + html;			
+			
+			html = '<span class="mail-closebtn">×</span>' + html;
+			console.log(GFile.getAll());
 			$scope.$apply(function(){
 				$scope.viewer = html;
 				$('#mailinglist .view').addClass('show')
 			})            
-		};		
+		};
 				
 	});
 
