@@ -327,7 +327,7 @@ a[href]{
 /* LAYOUT: Mailing list ------------------------------------------------- */
 .list-header{
     font-weight: normal;
-    padding: 0px 10px;
+    padding: 0px 20px;
     margin: 0;
     text-transform: uppercase;
     height: 10vh;
@@ -409,7 +409,7 @@ a[href]{
 
 .lmail-item{
     border-bottom: 1px solid #E2E2E2;
-    padding: 15px 10px;
+    padding: 15px 20px;
     line-height: 21px;
     position: relative;
 }

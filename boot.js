@@ -56,7 +56,7 @@
         }		
 	};
 	
-	App.prototype.checkAuth = function(){		
+	App.prototype.checkAuth = function(){
 		gapi.auth.authorize({
 		  'client_id': this.CLIENT_ID,
 		  'scope': this.SCOPES.join(' '),

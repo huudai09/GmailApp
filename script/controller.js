@@ -1,12 +1,12 @@
 ;(function(app){
 
-	'use strict';	
-	
+	'use strict';
+
 	app.factory('GFile', function(){
 		var files = {};
-		return {			
+		return {
 			save: function(data){
-				var fid = _.randId();								
+				var fid = _.randId();
 				files[fid] = data;
 				return fid;
 			},
@@ -33,8 +33,8 @@
 							}
 
 							// Blob for saving.
-							var blob = new Blob([ia], { type: file.mimeType });		
-							document.location.href = window.URL.createObjectURL(blob);							
+							var blob = new Blob([ia], { type: file.mimeType });
+							document.location.href = window.URL.createObjectURL(blob);
 						}
 					})
 				}
@@ -44,7 +44,7 @@
 	});
 
 	app.controller('Controller', function($scope, GFile) {
-		
+
 		$scope.labels = [
 			{name: 'INBOX',
 				title: 'Inbox',
@@ -65,7 +65,7 @@
 				title: 'Sent',
 				active: '',
 				type: 'system'
-			},			
+			},
 			{name: 'STARRED',
 				title: 'Starred',
 				active: '',
@@ -75,11 +75,11 @@
 				title: 'Draft',
 				active: '',
 				type: 'system'
-			}			 
+			}
 		];
-		
+
 		$scope.title = 'Inbox';
-		$scope.viewer = '';	
+		$scope.viewer = '';
 		$scope.composeForms = [{
 			id: _.randId(),
 			formID: _.randId()
@@ -90,31 +90,31 @@
 			from: 'Noone@people.com',
 			subject: 'No Subject',
 			snippet: 'No snippet'
-		}];		
-		
-		$scope.labels.forEach(function(label){ 
-			!!label.active && ($scope.title = label.title); 
-		});	
-		
-		var date = new Date(),			
+		}];
+
+		$scope.labels.forEach(function(label){
+			!!label.active && ($scope.title = label.title);
+		});
+
+		var date = new Date(),
 			pageTokens = [],
 			logoutUrl = 'https://accounts.google.com/logout',
-			d = date.getFullYear() + '/' + date.getMonth() + 1 + '/' + date.getDate();	
+			d = date.getFullYear() + '/' + date.getMonth() + 1 + '/' + date.getDate();
 
-		// Init function 
-		
-		(function INIT(){	
+		// Init function
+
+		(function INIT(){
 			$('#mailinglist .view').on('click', '.mail-file', function(){
 				var fid = this.className.replace(/^(.*{{)|(}}.*$)/g, '');
 				GFile.download(fid);
 			});
 		})();
-		
-		// Define: Action ------------------------------------------------------------------------------	
-		
+
+		// Define: Action ------------------------------------------------------------------------------
+
 		$scope.toggleMenu = function(ev){
 			var side = $('#side');
-			side.hasClass('show') ? side.removeClass('show') : side.addClass('show');			
+			side.hasClass('show') ? side.removeClass('show') : side.addClass('show');
 		};
 
 		$scope.logout = function(){
@@ -135,14 +135,14 @@
 				});
 			};
 			if(!cbox.hasClass('none')){
-				if(phase == '$apply' || phase == '$digest') {				
-					fn();				
+				if(phase == '$apply' || phase == '$digest') {
+					fn();
 				} else {
 					this.$apply(fn);
-				}			
+				}
 			}else{
 				$('.composebox.none').removeClass('none');
-			}			
+			}
 		};
 
 		$scope.closeView = function(){
@@ -151,39 +151,39 @@
 			});
 		};
 		$scope.closeView();
-		
-		$scope.next = function(){_navigate('next');};
-		$scope.prev = function(){_navigate('prev');};
-		
+
+		$scope.next = function(){ _navigate('next'); };
+		$scope.prev = function(){ _navigate('prev'); };
+
 		$scope.load = function(){
 			var lb = this.l;
 			_params = lb;
 			_pageToken = [] // clear token everytime labels loaded
 			_updateNavStt('clear'); // update nav's status (disabled/ enable)
 			_loadHandler(lb);
-		};			
-		
-		$scope.view = function(elem){			
+		};
+
+		$scope.view = function(elem){
 			var prop = elem.thread,
-				item = $('#'+prop.randID);						
-						
+				item = $('#'+prop.randID);
+
 			$('.tbl .selected').removeClass('selected');
-			item.addClass('selected');			
-			
+			item.addClass('selected');
+
 			Model.query('threads.get', {
 				'id': prop.id,
 				'unread': item.hasClass('label-unread')
 			}, _view);
-			
+
 			item.removeClass('label-unread');
 		};
-		
+
 		$scope.send = function(cb){
 			var data = $('#'+this.c.formID).serializeArray(),
 				content = '';
-			if (data.length >= 3) {	
+			if (data.length >= 3) {
 				content += 'From: ' + EMAIL + ' <' + EMAIL + '>\r\n';
-				content += 'Date: ' + (new Date()).toUTCString() + '\r\n';	
+				content += 'Date: ' + (new Date()).toUTCString() + '\r\n';
 				data.forEach(function (d) {
 					if (d.name != 'content') {
 						var name = d.name[0].toUpperCase() + d.name.slice(1, d.name.length);
@@ -195,8 +195,8 @@
 						content += ['\r\n\r\n', d.value].join('');
 					}
 				});
-				var base64EncodedEmail = (btoa(content)).replace(/\+/g, '-').replace(/\//g, '_');				
-				
+				var base64EncodedEmail = (btoa(content)).replace(/\+/g, '-').replace(/\//g, '_');
+
 				Model.query('messages.send', {
 					resource: {
 						raw: base64EncodedEmail
@@ -208,56 +208,72 @@
 				})
 			}
 		};
-		
-		// Define: Action Handler and config variable --------------------------------------------------------	
+
+		$scope.reply = function(){
+			var content = 'From:huudai09@gmail.com\r\n'
+						+ 'To:erik9x01@gmail.com\r\n'
+						+ 'Subject:Re: V/v: Ban giao cong viec\r\n'
+						+ '\r\n\r\nAlo 123';
+
+			Model.query('messages.send', {
+				resource: {
+					raw: btoa(content).replace(/\+/g, '-').replace(/\//g, '_'),
+					threadId: '15059e366a83cf06'
+				}
+			}, function(res){
+				console.log(res);
+			});
+		}
+
+		// Define: Action Handler and config variable --------------------------------------------------------
 		var _pageToken = [];
 		var _params = null;
 		var _navigate = function(dir){
-			var disabled = $((dir == 'next' ? '.list-next' : '.list-prev')).hasClass('disabled');				
+			var disabled = $((dir == 'next' ? '.list-next' : '.list-prev')).hasClass('disabled');
 			if(_pageToken.length && !disabled){
 				(dir == 'next') && _pageToken.splice(-2); // splice -2, cuz _loadHandler will push a new token when request success
-				_params.pageToken = _pageToken[_pageToken.length - 1];			
-				_loadHandler(_params);					
-			}			
+				_params.pageToken = _pageToken[_pageToken.length - 1];
+				_loadHandler(_params);
+			}
 		};
 		var _updateNavStt = function(type){
 			if(type == 'clear'){
-				$('.list-prev, .list-next').addClass('disabled');						
+				$('.list-prev, .list-next').addClass('disabled');
 			}else if(type == 'end'){
-				$('.list-prev').addClass('disabled');				
-			}else{			
+				$('.list-prev').addClass('disabled');
+			}else{
 				var n = _pageToken.length;
 				if(n == 1){
 					$('.list-prev').removeClass('disabled');
 					$('.list-next').addClass('disabled');
-				}			
+				}
 				if(n > 1){
-					$('.list-prev, .list-next').removeClass('disabled');						
-				}								
+					$('.list-prev, .list-next').removeClass('disabled');
+				}
 			}
 		}
 		var _updatePageToken = function(token){
-			_pageToken.push(token);			
+			_pageToken.push(token);
 			_updateNavStt(token);
 		};
-		
+
 		var _loadHandler = function(lb){
 			_.setLoading(true);
-			_.activeLabel(lb);	
+			_.activeLabel(lb);
 
 			Model.query('threads.list', {
 				'maxResults': LIMIT,
 				'pageToken': lb.pageToken || null,
-				'q': ['in:' + lb.name + '', 'older:' + d].join(' ')				
+				'q': ['in:' + lb.name + '', 'older:' + d].join(' ')
 			}, function(res){
 
 				// save pageToken
 				!!res.nextPageToken && _updatePageToken(res.nextPageToken);
 				// mark when reached the last page
-				!res.nextPageToken 
-					&& !!res.resultSizeEstimate && _pageToken.length 
+				!res.nextPageToken
+					&& !!res.resultSizeEstimate && _pageToken.length
 					&& res.resultSizeEstimate < LIMIT && _updatePageToken('end')
-					
+
 				if (!!res.threads) {
 					var threads = res.threads;
 					// using batch request, cuz `gapi.threads.list` doesn't return full resouces
@@ -268,7 +284,7 @@
 						}), {'id': threads[i]['id']});
 					}
 
-					batch.execute(function (res) {						
+					batch.execute(function (res) {
 						if (!!res) {
 							var data = [];
 							for (var x in res) {
@@ -279,12 +295,12 @@
 									result['headers'] = lastest_thread['payload']['headers'];
 									data.push(result);
 								}
-							}												
-							
-							if (data.length) {							
+							}
+
+							if (data.length) {
 								_buildList({'threads': data,
 									'resultSizeEstimate': data.length,
-									'label':lb});								
+									'label':lb});
 							}
 						}
 						_.setLoading(false);
@@ -295,10 +311,10 @@
 						'resultSizeEstimate': 0,
 						'label':lb});
 					_.setLoading(false);
-				}			
-			});		
-		};		
-		
+				}
+			});
+		};
+
 		var _buildList = function(data){
 			var item = [];
 			if (data.resultSizeEstimate > 0) {
@@ -319,7 +335,7 @@
 							}
 						}
 					}
-							
+
 					item.push({
 						clss: clss,
 						id: thread['threadId'],
@@ -332,138 +348,138 @@
 			}else{
 				_.notice('You have no message :D');
 			}
-			
+
 			$('#side').hasClass('show') && $('#side').removeClass('show');
-			
+
 			// update threads, title
 			$scope.$apply(function() {
-				$scope.threads = item;	
+				$scope.threads = item;
 				$scope.title = data.label.title;
-			});			
+			});
 		};
 		var _view = function(resp){
 			var html = '';
 			console.log(resp);
-			
+
 			// clear file
 			GFile.clear();
-			
+
 			!!resp.error && _.notice(resp.message);
-            if (!!resp.messages && resp.messages.length) {				
-                var bool = false, messlen = resp.messages.length,
-                        lastID = null, lastHeader = null;
-                for (var i = 0; i < resp.messages.length; i++) {
-                    var parts = resp.messages[i].payload.parts,
-                            body = resp.messages[i].payload.body,
-                            headers = resp.messages[i].payload.headers,
-                            h = {
-                                'subject': '',
-                                'from': '',
-                                'to': '',
-                                'date': ''
-                            };
-                    lastID = resp.messages[i].threadId;
-                    lastHeader = headers;
-                    // email pattern
-                    var patt = /([A-Za-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum|vn)\b)/g;
-                    for (var k = 0; k < headers.length; k++) {
-                        var head = headers[k],
-                            name = head.name.toLowerCase();
-                        if (!!~Object.keys(h).indexOf(name)) {
-                            h[name] = head.value.replace(/<|>/g, function (v) {
-                                return {
-                                    '<': '&lt;',
-                                    '>': '&gt;',
-                                }[v];
-                            });
-                            if (!!~['from', 'to'].indexOf(name)) {                            	
-                                h[name] = h[name].replace(patt, '<a title="$1">$1</a>');                               
-                            }
-                        }
-                    }
+						if (!!resp.messages && resp.messages.length) {
+								var bool = false, messlen = resp.messages.length,
+												lastID = null, lastHeader = null;
+								for (var i = 0; i < resp.messages.length; i++) {
+										var parts = resp.messages[i].payload.parts,
+														body = resp.messages[i].payload.body,
+														headers = resp.messages[i].payload.headers,
+														h = {
+																'subject': '',
+																'from': '',
+																'to': '',
+																'date': ''
+														};
+										lastID = resp.messages[i].threadId;
+										lastHeader = headers;
+										// email pattern
+										var patt = /([A-Za-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[A-Z]{2}|com|org|net|edu|gov|mil|biz|info|mobi|name|aero|asia|jobs|museum|vn)\b)/g;
+										for (var k = 0; k < headers.length; k++) {
+												var head = headers[k],
+														name = head.name.toLowerCase();
+												if (!!~Object.keys(h).indexOf(name)) {
+														h[name] = head.value.replace(/<|>/g, function (v) {
+																return {
+																		'<': '&lt;',
+																		'>': '&gt;',
+																}[v];
+														});
+														if (!!~['from', 'to'].indexOf(name)) {
+																h[name] = h[name].replace(patt, '<a title="$1">$1</a>');
+														}
+												}
+										}
 
-                    var date = '';
-                    if (!bool) {
-                        html += "<div class='mail-subject'>"
-                                + h.subject
-                                + "<div class='mail-date'>" + h.date + "</div></div>"
-                                + "<div class='mail-address'>"
-                                + "<div class='mail-from'>" + h.from + "</div>"
-                                + "<div class='mail-to'>" + h.to + "</div>"
-                                + "</div>";
-                        bool = true;
+										var date = '';
+										if (!bool) {
+												html += "<div class='mail-subject'>"
+																+ h.subject
+																+ "<div class='mail-date'>" + h.date + "</div></div>"
+																+ "<div class='mail-address'>"
+																+ "<div class='mail-from'>" + h.from + "</div>"
+																+ "<div class='mail-to'>" + h.to + "</div>"
+																+ "</div>";
+												bool = true;
 
-                    // create the section
-                    } else {
-                        if (h.date) {
-                            var d = new Date(h.date),
-                                    dd = [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/'),
-                                    tt = [d.getHours(), d.getMinutes()].join(':');
-                            date = "<div title='" + h.from + "' class='mail-content-date'>" + [tt, dd].join(' ') + "</div>";
-                        }
-                    }
+										// create the section
+										} else {
+												if (h.date) {
+														var d = new Date(h.date),
+																		dd = [d.getDate(), d.getMonth() + 1, d.getFullYear()].join('/'),
+																		tt = [d.getHours(), d.getMinutes()].join(':');
+														date = "<div title='" + h.from + "' class='mail-content-date'>" + [tt, dd].join(' ') + "</div>";
+												}
+										}
 
-                    var marked = i < (messlen - 1) ? 'old' : '';
+										var marked = i < (messlen - 1) ? 'old' : '';
 					var attachments = [];
 
-                    if (!!parts) {
-                        for (var j = 0; j < parts.length; j++) {
-                            var part = parts[j],								
-                                mtype = part.mimeType;
-									
+										if (!!parts) {
+												for (var j = 0; j < parts.length; j++) {
+														var part = parts[j],
+																mtype = part.mimeType;
+
 							// file attachments
 							if (part.filename && part.filename.length > 0) {
 								part['messageId'] = resp.id;
 								attachments.push(part);
 							}
-							
+
 							// message content
-                            switch (mtype) {
-                                case 'multipart/alternative':
-                                    if (part.parts) {
-                                        part.parts.forEach(function (p) {
-                                            if (p.mimeType == 'text/html') {
-                                                part.body.data = p.body.data;
-                                            }
-                                        })
-                                    }
+														switch (mtype) {
+																case 'multipart/alternative':
+																		if (part.parts) {
+																				part.parts.forEach(function (p) {
+																						if (p.mimeType == 'text/html') {
+																								part.body.data = p.body.data;
+																						}
+																				})
+																		}
 									// no break here, reuse the below case
-                                case 'text/html':									
-                                    html += '<div class="mail-content ' + marked + '">' + date + _.decode(part.body.data) + '</div>';
-                                    break;
-                            }
-                        }
-						
+																case 'text/html':
+																		html += '<div class="mail-content ' + marked + '">' + date + _.decode(part.body.data) + '</div>';
+																		break;
+														}
+												}
+
 						// append attachments
 						if(attachments.length){
 							var tmp = '', ext, file_id;
-							attachments.forEach(function(attach){								
+							attachments.forEach(function(attach){
 								file_id = ['{{', GFile.save(attach), '}}'].join('');
 								ext = attach.filename.match(/\.([a-zA-Z0-9]+)$/gi);
 								ext = ext ? ext[0].slice(1).toUpperCase() : 'NONE';
-								tmp += '<div title="'+ext+'" class="mail-file '+ file_id + ' '+ ext+ '">'+attach.filename+'</div>';								
+								tmp += '<div title="'+ext+'" class="mail-file '+ file_id + ' '+ ext+ '">'+attach.filename+'</div>';
 							});
-							html += '<div class="mail-attachments">' 
-								 + '<div class="mail-attachment-total">Have '+attachments.length+' attachments:</div>' 
-								 + tmp + '</div>';							
+							html += '<div class="mail-attachments">'
+								 + '<div class="mail-attachment-total">Have '+attachments.length+' attachments:</div>'
+								 + tmp + '</div>';
 						}
-						
-                    } else {
-                        if (!!body.data) {							
-                            html += '<div class="mail-content ' + marked + '">' + date + _.decode(body.data) + '</div>';
-                        }
-                    }
-                }
-            }
-			
+
+										} else {
+												if (!!body.data) {
+														html += '<div class="mail-content ' + marked + '">' + date + _.decode(body.data) + '</div>';
+												}
+										}
+								}
+						}
+
 			html = '<span class="mail-closebtn">×</span>' + html;
-			console.log(GFile.getAll());
+
 			$scope.$apply(function(){
 				$scope.viewer = html;
 				$('#mailinglist .view').addClass('show')
-			})            
+			})
 		};
-				
+
 	});
 
 })(window.app);

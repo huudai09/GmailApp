@@ -33,7 +33,7 @@
 			   .addClass(type);
 
 		switch(type){
-
+     
 			case 'notice':
 				setTimeout(function(){
 					the_pop.addClass('pop-hide');
